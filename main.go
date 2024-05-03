@@ -1,9 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
+import "CHIP8/emulation"
 
 func main() {
-	fmt.Println("Hello, world")
+	emulator := emulation.MakeChip8()
+	emulator.Start()
 }

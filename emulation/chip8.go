@@ -1,4 +1,4 @@
-package emulation
+package emulator
 
 import (
 	"fmt"
@@ -6,43 +6,43 @@ import (
 )
 
 type Chip8 struct {
-	MEM     [4096]byte
-	V       [16]byte
-	I       uint16
-	PC      uint16
-	SP      uint8
-	D_TIMER uint8
-	S_TIMER uint8
-	SCR     [32][8]byte
-	CLOCK   uint16
-	CUR_INS [2]byte
+	mem     [4096]byte
+	v       [16]byte
+	i       uint16
+	pc      uint16
+	sp      uint8
+	d_timer uint8
+	s_timer uint8
+	scr     [32][8]byte
+	clock   uint16
+	cur_ins [2]byte
 }
 
-func MakeChip8(clockSpeed uint16) *Chip8 {
+func Make_chip8(clockSpeed uint16) *Chip8 {
 	rs := &Chip8{
-		CLOCK: clockSpeed,
+		clock: clockSpeed,
 	}
-	copy(fontSprites[:], rs.MEM[:])
+	copy(FONT_SPRITES[:], rs.mem[:])
 	return rs
 }
 
 func (emulator *Chip8) Start() {
-	var sleepDuration int64 = int64(60000 / emulator.CLOCK)
+	var sleepDuration int64 = int64(60000 / emulator.clock)
 	start := time.Now().UnixMilli()
 	for {
 		now := time.Now().UnixMilli()
-		if now - start < sleepDuration {
+		if now-start < sleepDuration {
 			continue
 		}
 		start = now
-		emulator.fetchInstruction()
+		emulator.fetch_instruction()
 		time.Sleep(time.Duration(sleepDuration) * time.Millisecond)
 	}
 }
 
-func (emulator *Chip8) fetchInstruction() {
-	fmt.Printf("Fetch instruction at %d\n", emulator.PC)
-	emulator.CUR_INS[0] = emulator.MEM[emulator.PC]
-	emulator.CUR_INS[1] = emulator.MEM[emulator.PC+1]
-	emulator.PC += 2
+func (emulator *Chip8) fetch_instruction() {
+	fmt.Printf("Fetch instruction at %d\n", emulator.pc)
+	emulator.cur_ins[0] = emulator.mem[emulator.pc]
+	emulator.cur_ins[1] = emulator.mem[emulator.pc+1]
+	emulator.pc += 2
 }

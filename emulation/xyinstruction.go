@@ -1,4 +1,4 @@
-package emulation
+package emulator
 
 const MASK byte = 0b00001111
 

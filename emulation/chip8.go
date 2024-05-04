@@ -18,22 +18,25 @@ type Chip8 struct {
 	CUR_INS [2]byte
 }
 
-func MakeChip8() *Chip8 {
+func MakeChip8(clockSpeed uint16) *Chip8 {
 	rs := &Chip8{
-		CLOCK: 500,
+		CLOCK: clockSpeed,
 	}
 	copy(fontSprites[:], rs.MEM[:])
 	return rs
 }
 
 func (emulator *Chip8) Start() {
-	sleepDuration := 60000 / emulator.CLOCK
+	var sleepDuration int64 = int64(60000 / emulator.CLOCK)
+	start := time.Now().UnixMilli()
 	for {
+		now := time.Now().UnixMilli()
+		if now - start < sleepDuration {
+			continue
+		}
+		start = now
 		emulator.fetchInstruction()
 		time.Sleep(time.Duration(sleepDuration) * time.Millisecond)
-		if emulator.PC >= 4096 {
-			break
-		}
 	}
 }
 

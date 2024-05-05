@@ -41,7 +41,7 @@ func (emulator *Chip8) Start() {
 }
 
 func (emulator *Chip8) cycle() {
-	var sleepDuration int64 = int64(60000 / emulator.clock)
+	var sleepDuration int64 = int64(1000 / emulator.clock)
 	start := time.Now().UnixMilli()
 	for emulator.pc < __MEM_SIZE {
 		now := time.Now().UnixMilli()

@@ -26,7 +26,7 @@ func Make_chip8(clockSpeed uint16) *Chip8 {
 	rs := &Chip8{
 		clock: clockSpeed,
 	}
-	copy(font_sprites[:], rs.mem[:])
+	copy(rs.mem[:], font_sprites[:])
 	return rs
 }
 
@@ -35,11 +35,12 @@ func (emulator *Chip8) Start() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		emulator.start_chip_clock()
+		emulator.cycle()
 	}()
+	wg.Wait()
 }
 
-func (emulator *Chip8) start_chip_clock() {
+func (emulator *Chip8) cycle() {
 	var sleepDuration int64 = int64(60000 / emulator.clock)
 	start := time.Now().UnixMilli()
 	for emulator.pc < __MEM_SIZE {
@@ -57,17 +58,15 @@ func (emulator *Chip8) fetch_instruction() {
 	fmt.Printf("Fetch instruction at %d\n", emulator.pc)
 	var ins [2]byte = [2]byte(emulator.mem[emulator.pc : emulator.pc+2])
 	emulator.execute_instruction(ins)
-	if emulator.mem[338] != 0x1 {
-		emulator.pc += 2
-	}
+	emulator.pc += 2
 }
 
 func (emulator *Chip8) execute_instruction(instruction [2]byte) {
 	switch opcode := instruction[0] >> 4; opcode {
 	case 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x9, 0xb, 0xe:
-		emulator.execute_flow_control_instruction(instruction)
+		emulator.execute_flow_control_instruction(opcode, instruction)
 	case 0x6, 0x7, 0x8, 0xa, 0xc, 0xf:
-		emulator.execute_alu_instruction(instruction)
+		emulator.execute_alu_instruction(opcode, instruction)
 	case 0xd:
 		emulator.execute_display_instruction(instruction)
 	default:

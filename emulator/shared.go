@@ -2,6 +2,8 @@ package emulator
 
 var __LOWER_MASK uint8 = 0b00001111
 var __LEAST_SIGNIFICANT_MASK uint8 = 0b00000001
+var __SCR_POS = 80
+var __KB_POS = 80 + 256
 
 var font_sprites = [80]byte{
 	0xf0, 0x90, 0x90, 0x90, 0xf0,

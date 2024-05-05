@@ -16,7 +16,7 @@ type Chip8 struct {
 	v       [__REGISTER_QUANTITY]byte
 	i       uint16
 	pc      uint16
-	sp      uint8
+	sp      uint16
 	d_timer uint8
 	s_timer uint8
 	clock   uint16

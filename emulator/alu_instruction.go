@@ -82,3 +82,36 @@ func (emulator *Chip8) exec_set_vx_rand_and_kk(random byte, instruction [2]byte)
 	x := instruction[0] & __LOWER_MASK
 	emulator.v[x] = random & instruction[1]
 }
+
+func (emulator *Chip8) exec_opcode_f_ins(instruction [2]byte) {
+	x := instruction[0] & __LOWER_MASK
+	switch instruction[1] {
+	case 0x07:
+		emulator.v[x] = emulator.d_timer
+	case 0x0a:
+		if emulator.mem[__KB_POS] != 0x1 {
+			emulator.pc -= 2
+		}
+		emulator.v[x] = emulator.mem[__KB_POS+1]
+	case 0x15:
+		emulator.d_timer = emulator.v[x]
+	case 0x18:
+		emulator.s_timer = emulator.v[x]
+	case 0x1e:
+		emulator.i += uint16(emulator.v[x])
+	case 0x29:
+		emulator.i = uint16(emulator.v[x] % 16 * 5)
+	case 0x33:
+		emulator.mem[emulator.i] = emulator.v[x] / 100
+		emulator.mem[emulator.i+1] = (emulator.v[x] % 100) / 10
+		emulator.mem[emulator.i+2] = emulator.v[x] % 10
+	case 0x55:
+		for i := 0; i <= int(x); i++ {
+			emulator.mem[int(emulator.i)+i] = emulator.v[i]
+		}
+	case 0x65:
+		for i := 0; i <= int(x); i++ {
+			emulator.v[i] = emulator.mem[int(emulator.i)+i]
+		}
+	}
+}

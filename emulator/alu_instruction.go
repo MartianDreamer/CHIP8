@@ -18,6 +18,8 @@ func (emulator *Chip8) execute_alu_instruction(opcode byte, instruction [2]byte)
 	case 0xc:
 		random_number := byte(rand.IntN(0x100))
 		emulator.exec_set_vx_rand_and_kk(random_number, instruction)
+	case 0xf:
+		emulator.exec_opcode_f_ins(instruction)
 	}
 	fmt.Printf("execute alu instruction %v\n", instruction)
 }

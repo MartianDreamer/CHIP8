@@ -50,10 +50,19 @@ func (emulator *Chip8) Start() {
 	wg.Wait()
 }
 
+func (em *Chip8) Stop() {
+	em.running = false
+}
+
+func (em *Chip8) Reset() {
+	em.pc = __PROGRAM_POS
+	em.sp = __STACK_POS - 2
+}
+
 func (emulator *Chip8) cycle() {
 	var sleep_duration int64 = int64(1000 / emulator.clock)
 	start := time.Now().UnixMilli()
-	for emulator.pc < __MEM_SIZE {
+	for emulator.running && emulator.pc < __MEM_SIZE {
 		now := time.Now().UnixMilli()
 		if now-start < sleep_duration {
 			continue

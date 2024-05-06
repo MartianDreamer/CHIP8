@@ -37,7 +37,6 @@ func Make_chip8(clockSpeed uint32) *Chip8 {
 
 func (emulator *Chip8) Start() {
 	var wg sync.WaitGroup
-	emulator.execute_instruction([2]byte{0xd0, 15})
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

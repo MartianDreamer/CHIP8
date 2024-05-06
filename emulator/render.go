@@ -7,8 +7,8 @@ import (
 
 const __MASK = 0b10000000
 
-var __FG_COLOR = color.Black
-var __BG_COLOR = color.White
+var __FG_COLOR = color.White
+var __BG_COLOR = color.Black
 
 type Chip8_Renderer struct {
 	Emulator *Chip8

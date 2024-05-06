@@ -10,7 +10,7 @@ func main() {
 	em := emulator.Make_chip8(500)
 	em.Start()
 	game := &emulator.Chip8_Renderer{Emulator: em}
-	ebiten.SetWindowSize(320, 160)
+	ebiten.SetWindowSize(640, 320)
 	ebiten.SetWindowTitle("MyChip8")
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)

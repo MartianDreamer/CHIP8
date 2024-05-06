@@ -19,10 +19,11 @@ type Chip8 struct {
 	sp      uint8
 	d_timer uint8
 	s_timer uint8
-	clock   uint16
+	clock   uint32
+	running bool
 }
 
-func Make_chip8(clockSpeed uint16) *Chip8 {
+func Make_chip8(clockSpeed uint32) *Chip8 {
 	rs := &Chip8{
 		clock: clockSpeed,
 		sp:    __STACK_POS - 2, // - 2 because there is no stack frame in the stack when we init the emulator
@@ -39,21 +40,26 @@ func (emulator *Chip8) Start() {
 		defer wg.Done()
 		emulator.cycle()
 	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		emulator.timer_cycle()
+	}()
 	wg.Wait()
 }
 
 func (emulator *Chip8) cycle() {
-	var sleepDuration int64 = int64(1000 / emulator.clock)
+	var sleep_duration int64 = int64(1000 / emulator.clock)
 	start := time.Now().UnixMilli()
 	for emulator.pc < __MEM_SIZE {
 		now := time.Now().UnixMilli()
-		if now-start < sleepDuration {
+		if now-start < sleep_duration {
 			continue
 		}
-		start = now
 		emulator.fetch_instruction()
-		time.Sleep(time.Duration(sleepDuration) * time.Millisecond)
+		start = now
 	}
+	emulator.running = false
 }
 
 func (emulator *Chip8) fetch_instruction() {
@@ -73,5 +79,23 @@ func (emulator *Chip8) execute_instruction(instruction [2]byte) {
 		emulator.execute_display_instruction(instruction)
 	default:
 		panic("unsupported opcode")
+	}
+}
+
+func (em *Chip8) timer_cycle() {
+	sleep_duration := int64(10000 / 60)
+	start := time.Now().UnixMilli()
+	for em.running {
+		now := time.Now().UnixMilli()
+		if now-start < sleep_duration {
+			continue
+		}
+		if em.d_timer > 0 {
+			em.d_timer--
+		}
+		if em.s_timer > 0 {
+			em.s_timer--
+		}
+		start = now
 	}
 }

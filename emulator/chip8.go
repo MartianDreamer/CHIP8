@@ -2,7 +2,6 @@ package emulator
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
@@ -12,16 +11,17 @@ const (
 )
 
 type Chip8 struct {
-	mem     [__MEM_SIZE]byte
-	v       [__REGISTER_QUANTITY]byte
-	i       uint16
-	pc      uint16
-	sp      uint8
-	d_timer uint8
-	s_timer uint8
-	clock   uint32
-	running bool
-	Screen  []byte
+	mem      [__MEM_SIZE]byte
+	v        [__REGISTER_QUANTITY]byte
+	i        uint16
+	pc       uint16
+	sp       uint8
+	d_timer  uint8
+	s_timer  uint8
+	clock    uint32
+	running  bool
+	Screen   []byte
+	Keyboard []byte
 }
 
 func Make_chip8(clockSpeed uint32) *Chip8 {
@@ -31,23 +31,19 @@ func Make_chip8(clockSpeed uint32) *Chip8 {
 		pc:    __PROGRAM_POS,
 	}
 	rs.Screen = rs.mem[__SCR_POS : __SCR_POS+(__WIDTH*__HEIGHT)]
+	rs.Keyboard = rs.mem[__KB_POS : __KB_POS+2]
 	copy(rs.mem[:], font_sprites[:])
 	return rs
 }
 
 func (emulator *Chip8) Start() {
-	var wg sync.WaitGroup
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
 		emulator.cycle()
 	}()
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
 		emulator.timer_cycle()
 	}()
-	wg.Wait()
+	emulator.running = true
 }
 
 func (em *Chip8) Stop() {
@@ -59,6 +55,10 @@ func (em *Chip8) Reset() {
 	em.sp = __STACK_POS - 2
 }
 
+func (em *Chip8) LoadRom(file []byte) {
+	copy(em.mem[__PROGRAM_POS:], file)
+}
+
 func (emulator *Chip8) cycle() {
 	var sleep_duration int64 = int64(1000 / emulator.clock)
 	start := time.Now().UnixMilli()
@@ -67,17 +67,20 @@ func (emulator *Chip8) cycle() {
 		if now-start < sleep_duration {
 			continue
 		}
-		emulator.fetch_instruction()
+		instruction := emulator.fetch_instruction()
+		emulator.execute_instruction(instruction)
 		start = now
 	}
 	emulator.running = false
 }
 
-func (emulator *Chip8) fetch_instruction() {
-	fmt.Printf("Fetch instruction at %d\n", emulator.pc)
+func (emulator *Chip8) fetch_instruction() [2]byte {
 	var ins [2]byte = [2]byte(emulator.mem[emulator.pc : emulator.pc+2])
-	emulator.execute_instruction(ins)
+	if ins[0] != 0x00 || ins[1] != 0x00 {
+		fmt.Printf("Instruction: %02X%02X\n", ins[0], ins[1])
+	}
 	emulator.pc += 2
+	return ins
 }
 
 func (emulator *Chip8) execute_instruction(instruction [2]byte) {

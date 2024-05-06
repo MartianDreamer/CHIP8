@@ -8,10 +8,9 @@ const (
 func (emulator *Chip8) execute_flow_control_instruction(opcode byte, instruction [2]byte) {
 	switch opcode {
 	case 0x0:
-		opType := instruction[1] & __LOWER_MASK
-		if opType == 0x0 {
+		if instruction[1] == 0xe0 {
 			emulator.exec_clear_display()
-		} else if opType == 0xe {
+		} else if instruction[1] == 0xee {
 			emulator.exec_return_from_subroutine()
 		}
 	case 0x1:

@@ -1,6 +1,8 @@
 package emulator
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_exec_clear_display(t *testing.T) {
 	em := Make_chip8(500)
@@ -21,7 +23,7 @@ func Test_return_from_subroutine(t *testing.T) {
 	em.mem[__STACK_POS+1] = 0xbc
 	em.sp = __STACK_POS
 	em.execute_instruction([2]byte{0x00, 0xee})
-	if em.sp != __STACK_POS - 2 || em.pc != 0xfabc {
+	if em.sp != __STACK_POS-2 || em.pc != 0xfabc {
 		t.Fatal()
 	}
 }
@@ -76,4 +78,80 @@ func Test_skip_if_vx_neq_kk(t *testing.T) {
 	}
 }
 
+func Test_skip_if_vx_eq_vy(t *testing.T) {
+	em := Make_chip8(500)
+	em.pc = 0x0300
+	em.v[0xa] = 0xfa
+	em.v[0x1] = 0xfa
+	em.execute_instruction([2]byte{0x5a, 0x10})
+	if em.pc != 0x0302 {
+		t.Fatal()
+	}
+}
 
+func Test_skip_if_vx_neq_vy(t *testing.T) {
+	em := Make_chip8(500)
+	em.pc = 0x0300
+	em.v[0xa] = 0xfa
+	em.v[0x1] = 0x11
+	em.execute_instruction([2]byte{0x9a, 0x10})
+	if em.pc != 0x0302 {
+		t.Fatal()
+	}
+}
+
+func Test_jump_v0_add_nnn(t *testing.T) {
+	em := Make_chip8(500)
+	em.v[0x0] = 0x02
+	em.execute_instruction([2]byte{0xba, 0xb2})
+	if em.pc != 0xab4 {
+		t.Fatal()
+	}
+}
+
+func Test_skip_if_vx_pressed(t *testing.T) {
+	em := Make_chip8(500)
+	em.pc = 0x300
+	em.v[0x8] = 0xb
+	em.mem[__KB_POS] = 0x0
+	em.execute_instruction([2]byte{0xe8, 0x9e})
+	if em.pc != 0x300 {
+		t.Fatal()
+	}
+	em.mem[__KB_POS] = 0x1
+	em.mem[__KB_POS+1] = 0xa
+	em.execute_instruction([2]byte{0xe8, 0x9e})
+	if em.pc != 0x300 {
+		t.Fatal()
+	}
+	em.mem[__KB_POS] = 0x1
+	em.mem[__KB_POS+1] = 0xb
+	em.execute_instruction([2]byte{0xe8, 0x9e})
+	if em.pc != 0x302 {
+		t.Fatal()
+	}
+}
+
+func Test_skip_if_vx_not_pressed(t *testing.T) {
+	em := Make_chip8(500)
+	em.pc = 0x300
+	em.v[0x8] = 0xb
+	em.mem[__KB_POS] = 0x1
+	em.mem[__KB_POS+1] = 0xb
+	em.execute_instruction([2]byte{0xe8, 0xa1})
+	if em.pc != 0x300 {
+		t.Fatal()
+	}
+	em.mem[__KB_POS] = 0x1
+	em.mem[__KB_POS+1] = 0xa
+	em.execute_instruction([2]byte{0xe8, 0xa1})
+	if em.pc != 0x302 {
+		t.Fatal()
+	}
+	em.mem[__KB_POS] = 0x0
+	em.mem[__KB_POS+1] = 0xb
+	em.execute_instruction([2]byte{0xe8, 0xa1})
+	if em.pc != 0x304 {
+		t.Fatal()
+	}
+}

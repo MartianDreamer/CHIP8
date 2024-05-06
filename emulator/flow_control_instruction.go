@@ -40,10 +40,11 @@ func (emulator *Chip8) exec_clear_display() {
 }
 
 func (emulator *Chip8) exec_return_from_subroutine() {
-	emulator.pc = uint16(emulator.mem[emulator.sp])<<8 | uint16(emulator.mem[emulator.sp+1])
-	if emulator.sp > __STACK_POS {
-		emulator.sp -= 2
+	if emulator.sp < __STACK_POS {
+		panic("no subroutine to return from")
 	}
+	emulator.pc = uint16(emulator.mem[emulator.sp])<<8 | uint16(emulator.mem[emulator.sp+1])
+	emulator.sp -= 2
 }
 
 func (emulator *Chip8) exec_jump_to_nnn(instruction [2]byte) {

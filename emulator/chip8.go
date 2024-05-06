@@ -25,7 +25,7 @@ type Chip8 struct {
 func Make_chip8(clockSpeed uint16) *Chip8 {
 	rs := &Chip8{
 		clock: clockSpeed,
-		sp:    __STACK_POS,
+		sp:    __STACK_POS - 2, // - 2 because there is no stack frame in the stack when we init the emulator
 		pc:    __PROGRAM_POS,
 	}
 	copy(rs.mem[:], font_sprites[:])

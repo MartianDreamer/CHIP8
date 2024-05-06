@@ -41,7 +41,7 @@ func Test_exec_set_vx_rand_and_kk(t *testing.T) {
 	emulator.execute_instruction([2]byte{0xce, 0b11001111})
 	second := emulator.v[0xe]
 	if first == second {
-		t.Failed()
+		t.Fatal()
 	}
 }
 
@@ -236,7 +236,7 @@ func Test_store_register(t *testing.T) {
 	emulator.i = 0x200
 	emulator.execute_instruction([2]byte{0xf3, 0x55})
 	if emulator.mem[0x200] != 0xfa || emulator.mem[0x201] != 0x1b || emulator.mem[0x202] != 0xff || emulator.mem[0x203] != 0x25 {
-		t.Failed()
+		t.Fatal()
 	}
 }
 
@@ -246,10 +246,10 @@ func Test_read_register(t *testing.T) {
 	emulator.mem[0x301] = 0x1b
 	emulator.mem[0x302] = 0xff
 	emulator.mem[0x303] = 0x25
-	emulator.i = 300
+	emulator.i = 0x300
 	emulator.execute_instruction([2]byte{0xf3, 0x65})
 	if emulator.v[0] != 0xfa || emulator.v[1] != 0x1b || emulator.v[2] != 0xff || emulator.v[3] != 0x25 {
-		t.Failed()
+		t.Fatal()
 	}
 }
 
@@ -265,6 +265,6 @@ func Test_set_vx_key(t *testing.T) {
 	emulator.pc = 0x215
 	emulator.execute_instruction([2]byte{0xf0, 0x0a})
 	if emulator.pc != 0x215 || emulator.v[0] != 0x5 {
-		t.Failed()
+		t.Fatal()
 	}
 }

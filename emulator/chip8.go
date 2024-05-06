@@ -16,7 +16,7 @@ type Chip8 struct {
 	v       [__REGISTER_QUANTITY]byte
 	i       uint16
 	pc      uint16
-	sp      uint16
+	sp      uint8
 	d_timer uint8
 	s_timer uint8
 	clock   uint16
@@ -25,6 +25,7 @@ type Chip8 struct {
 func Make_chip8(clockSpeed uint16) *Chip8 {
 	rs := &Chip8{
 		clock: clockSpeed,
+		sp: __STACK_POS,
 	}
 	copy(rs.mem[:], font_sprites[:])
 	return rs

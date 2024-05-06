@@ -98,7 +98,7 @@ func (emulator *Chip8) exec_opcode_f_ins(instruction [2]byte) {
 	case 0x1e:
 		emulator.i += uint16(emulator.v[x])
 	case 0x29:
-		emulator.i = uint16(emulator.v[x] % 16 * 5)
+		emulator.i = uint16(__FONT_SPRITE_POS + (emulator.v[x] % 16 * 5))
 	case 0x33:
 		emulator.mem[emulator.i] = emulator.v[x] / 100
 		emulator.mem[emulator.i+1] = (emulator.v[x] % 100) / 10

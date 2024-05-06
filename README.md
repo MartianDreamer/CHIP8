@@ -6,6 +6,7 @@ technical reference: http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
 
 Memory layout:
 
-* First 80 byte of memory is for font<br>
-* Following 256 bytes are for screen <br>
-* Next 2 bytes are for keyboard<br>
+* Font sprites is located at [0, 80)
+* Stack is located at [80,112)
+* Screen is located at [112,368)
+* Keyboard is located at [368,370)

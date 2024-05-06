@@ -41,7 +41,9 @@ func (emulator *Chip8) exec_clear_display() {
 
 func (emulator *Chip8) exec_return_from_subroutine() {
 	emulator.pc = uint16(emulator.mem[emulator.sp])<<8 | uint16(emulator.mem[emulator.sp+1])
-	emulator.sp -= 2
+	if emulator.sp > __STACK_POS {
+		emulator.sp -= 2
+	}
 }
 
 func (emulator *Chip8) exec_jump_to_nnn(instruction [2]byte) {
@@ -49,6 +51,9 @@ func (emulator *Chip8) exec_jump_to_nnn(instruction [2]byte) {
 }
 
 func (em *Chip8) exec_call_subroutine(instruction [2]byte) {
+	if em.sp >= __SCR_POS {
+		panic("nested call exceeded")
+	}
 	em.sp += 2
 	em.mem[em.sp] = byte(em.pc >> 8)
 	em.mem[em.sp+1] = byte(em.pc)

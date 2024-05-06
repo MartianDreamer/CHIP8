@@ -1,9 +1,6 @@
 package emulator
 
-import (
-	"fmt"
-	"time"
-)
+import "time"
 
 const (
 	__MEM_SIZE          = 4096
@@ -76,9 +73,6 @@ func (emulator *Chip8) cycle() {
 
 func (emulator *Chip8) fetch_instruction() [2]byte {
 	var ins [2]byte = [2]byte(emulator.mem[emulator.pc : emulator.pc+2])
-	if ins[0] != 0x00 || ins[1] != 0x00 {
-		fmt.Printf("Instruction: %02X%02X\n", ins[0], ins[1])
-	}
 	emulator.pc += 2
 	return ins
 }

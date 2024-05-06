@@ -1,4 +1,4 @@
-package graphic
+package chip8_io
 
 import (
 	"image/color"
@@ -13,7 +13,6 @@ const __MASK = 0b10000000
 
 var __FG_COLOR = color.White
 var __BG_COLOR = color.Black
-var __RANDOM_SOUND = []byte{0xff, 0xfa, 0xfc, 0x12}
 
 type Renderer struct {
 	em     *emulator.Chip8
@@ -31,7 +30,8 @@ func (r *Renderer) Update() error {
 	}
 	if r.em.S_timer > 0 && !r.player.IsPlaying() {
 		r.player.Play()
-	} else {
+	}
+	if r.em.S_timer <= 0 {
 		r.player.Pause()
 	}
 	return nil
@@ -104,7 +104,10 @@ func keyMap(key ebiten.Key) (byte, byte) {
 
 func Make_Renderer(em *emulator.Chip8) *Renderer {
 	audioContext := audio.NewContext(48000)
-	player := audioContext.NewPlayerFromBytes(__RANDOM_SOUND)
+	player, err := audioContext.NewPlayer(&stream{})
+	if err != nil {
+		panic("failed to create sound player")
+	}
 	renderer := &Renderer{
 		em:     em,
 		player: player,

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/MartianDreamer/CHIP8/emulator"
-	"github.com/MartianDreamer/CHIP8/graphic"
+	"github.com/MartianDreamer/CHIP8/chip8_io"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -21,7 +21,7 @@ func main() {
 	em.LoadRom(file)
 	ebiten.SetWindowSize(640, 320)
 	ebiten.SetWindowTitle("MyChip8")
-	if err := ebiten.RunGame(graphic.Make_Renderer(em)); err != nil {
+	if err := ebiten.RunGame(chip8_io.Make_Renderer(em)); err != nil {
 		log.Fatal(err)
 	}
 }

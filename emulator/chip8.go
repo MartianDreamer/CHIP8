@@ -21,6 +21,7 @@ type Chip8 struct {
 	s_timer uint8
 	clock   uint32
 	running bool
+	Screen  []byte
 }
 
 func Make_chip8(clockSpeed uint32) *Chip8 {
@@ -29,6 +30,7 @@ func Make_chip8(clockSpeed uint32) *Chip8 {
 		sp:    __STACK_POS - 2, // - 2 because there is no stack frame in the stack when we init the emulator
 		pc:    __PROGRAM_POS,
 	}
+	rs.Screen = rs.mem[__SCR_POS : __SCR_POS+(__WIDTH*__HEIGHT)]
 	copy(rs.mem[:], font_sprites[:])
 	return rs
 }

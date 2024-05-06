@@ -23,13 +23,12 @@ func (r *Renderer) Update() error {
 		r.Emulator.Start()
 		r.started = true
 	}
+	r.Emulator.Keyboard[0] = 0x0
 	r.keys = inpututil.AppendPressedKeys(r.keys[:0])
 	if len(r.keys) > 0 {
 		clicked, key := keyMap(r.keys[0])
 		r.Emulator.Keyboard[0] = clicked
 		r.Emulator.Keyboard[1] = key
-	} else {
-		r.Emulator.Keyboard[0] = 0x0
 	}
 	return nil
 }

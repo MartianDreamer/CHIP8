@@ -19,10 +19,9 @@ func main() {
 	}
 	em := emulator.Make_chip8(1000)
 	em.LoadRom(file)
-	game := &graphic.Renderer{Emulator: em}
 	ebiten.SetWindowSize(640, 320)
 	ebiten.SetWindowTitle("MyChip8")
-	if err := ebiten.RunGame(game); err != nil {
+	if err := ebiten.RunGame(graphic.Make_Renderer(em)); err != nil {
 		log.Fatal(err)
 	}
 }

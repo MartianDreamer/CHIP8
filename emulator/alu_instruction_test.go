@@ -193,7 +193,7 @@ func Test_set_s_timer_vx(t *testing.T) {
 	emulator := Make_chip8(500)
 	emulator.v[0x1] = 0xf1
 	emulator.execute_instruction([2]byte{0xf1, 0x18})
-	if emulator.s_timer != 0xf1 {
+	if emulator.S_timer != 0xf1 {
 		t.Fatalf("delay timer: %d", emulator.d_timer)
 	}
 }

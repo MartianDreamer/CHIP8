@@ -17,7 +17,7 @@ type Chip8 struct {
 	pc       uint16
 	sp       uint8
 	d_timer  uint8
-	s_timer  uint8
+	S_timer  uint8
 	clock    uint32
 	running  bool
 	Screen   []byte
@@ -107,8 +107,8 @@ func (em *Chip8) timer_cycle() {
 		if em.d_timer > 0 {
 			em.d_timer--
 		}
-		if em.s_timer > 0 {
-			em.s_timer--
+		if em.S_timer > 0 {
+			em.S_timer--
 		}
 		start = now
 	}

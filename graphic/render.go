@@ -1,34 +1,38 @@
 package graphic
 
 import (
+	"image/color"
+
 	"github.com/MartianDreamer/CHIP8/emulator"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"image/color"
 )
 
 const __MASK = 0b10000000
 
 var __FG_COLOR = color.White
 var __BG_COLOR = color.Black
+var __RANDOM_SOUND = []byte{0xff, 0xfa, 0xfc, 0x12}
 
 type Renderer struct {
-	Emulator *emulator.Chip8
-	started  bool
-	keys     []ebiten.Key
+	em     *emulator.Chip8
+	keys   []ebiten.Key
+	player *audio.Player
 }
 
 func (r *Renderer) Update() error {
-	if !r.started {
-		r.Emulator.Start()
-		r.started = true
-	}
-	r.Emulator.Keyboard[0] = 0x0
+	r.em.Keyboard[0] = 0x0
 	r.keys = inpututil.AppendPressedKeys(r.keys[:0])
 	if len(r.keys) > 0 {
 		clicked, key := keyMap(r.keys[0])
-		r.Emulator.Keyboard[0] = clicked
-		r.Emulator.Keyboard[1] = key
+		r.em.Keyboard[0] = clicked
+		r.em.Keyboard[1] = key
+	}
+	if r.em.S_timer > 0 && !r.player.IsPlaying() {
+		r.player.Play()
+	} else {
+		r.player.Pause()
 	}
 	return nil
 }
@@ -45,7 +49,7 @@ func (r *Renderer) Layout(outsideWidth, outsideHeight int) (screenWidth, screenH
 func (r *Renderer) mapToImage() *ebiten.Image {
 	image := ebiten.NewImage(64, 32)
 	image.Fill(__BG_COLOR)
-	for i, val := range r.Emulator.Screen {
+	for i, val := range r.em.Screen {
 		y := i / 8
 		for j := 0; j < 8; j++ {
 			x := (i%8)*8 + j
@@ -96,4 +100,15 @@ func keyMap(key ebiten.Key) (byte, byte) {
 	default:
 		return 0x0, 0x0
 	}
+}
+
+func Make_Renderer(em *emulator.Chip8) *Renderer {
+	audioContext := audio.NewContext(48000)
+	player := audioContext.NewPlayerFromBytes(__RANDOM_SOUND)
+	renderer := &Renderer{
+		em:     em,
+		player: player,
+	}
+	em.Start()
+	return renderer
 }

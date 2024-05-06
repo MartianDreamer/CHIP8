@@ -94,7 +94,7 @@ func (emulator *Chip8) exec_opcode_f_ins(instruction [2]byte) {
 	case 0x15:
 		emulator.d_timer = emulator.v[x]
 	case 0x18:
-		emulator.s_timer = emulator.v[x]
+		emulator.S_timer = emulator.v[x]
 	case 0x1e:
 		emulator.i += uint16(emulator.v[x])
 	case 0x29:

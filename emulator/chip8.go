@@ -25,7 +25,8 @@ type Chip8 struct {
 func Make_chip8(clockSpeed uint16) *Chip8 {
 	rs := &Chip8{
 		clock: clockSpeed,
-		sp: __STACK_POS,
+		sp:    __STACK_POS,
+		pc:    __PROGRAM_POS,
 	}
 	copy(rs.mem[:], font_sprites[:])
 	return rs

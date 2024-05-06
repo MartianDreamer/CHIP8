@@ -12,6 +12,7 @@ const __FONT_SPRITE_POS = 0
 const __STACK_POS = __FONT_SPRITE_POS + (__FONT_CHARACTER_SIZE * __FONT_CHARACTER_COUNT)
 const __SCR_POS = __STACK_POS + (__STACK_ENTRY_SIZE * __STACK_ENTRY_COUNT)
 const __KB_POS = __SCR_POS + (__WIDTH * __HEIGHT)
+const __PROGRAM_POS = 0x200
 
 var font_sprites = [80]byte{
 	0xf0, 0x90, 0x90, 0x90, 0xf0,

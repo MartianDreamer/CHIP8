@@ -1,9 +1,6 @@
 package emulator
 
-import (
-	"fmt"
-	"math/rand/v2"
-)
+import "math/rand/v2"
 
 func (emulator *Chip8) execute_alu_instruction(opcode byte, instruction [2]byte) {
 	switch opcode {
@@ -21,7 +18,6 @@ func (emulator *Chip8) execute_alu_instruction(opcode byte, instruction [2]byte)
 	case 0xf:
 		emulator.exec_opcode_f_ins(instruction)
 	}
-	fmt.Printf("execute alu instruction %v\n", instruction)
 }
 
 func (emulator *Chip8) exec_set_vx_kk(instruction [2]byte) {

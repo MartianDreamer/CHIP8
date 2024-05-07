@@ -34,12 +34,8 @@ func Make_chip8(clockSpeed uint32) *Chip8 {
 }
 
 func (emulator *Chip8) Start() {
-	go func() {
-		emulator.cycle()
-	}()
-	go func() {
-		emulator.timer_cycle()
-	}()
+	go emulator.cycle()
+	go emulator.timer_cycle()
 	emulator.running = true
 }
 

@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-
 	"github.com/MartianDreamer/CHIP8/emulator"
 	"github.com/MartianDreamer/CHIP8/chip8_io"
 	"github.com/hajimehoshi/ebiten/v2"

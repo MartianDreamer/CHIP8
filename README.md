@@ -1,4 +1,4 @@
-# A chip8 emulation
+# A chip8 emulator
 
 I made this to learn how to emulate hardware
 

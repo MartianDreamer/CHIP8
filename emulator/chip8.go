@@ -34,9 +34,9 @@ func Make_chip8(clockSpeed uint32) *Chip8 {
 }
 
 func (emulator *Chip8) Start() {
+	emulator.running = true
 	go emulator.cycle()
 	go emulator.timer_cycle()
-	emulator.running = true
 }
 
 func (em *Chip8) Stop() {
@@ -46,6 +46,7 @@ func (em *Chip8) Stop() {
 func (em *Chip8) Reset() {
 	em.pc = __PROGRAM_POS
 	em.sp = __STACK_POS - 2
+	em.Start()
 }
 
 func (em *Chip8) LoadRom(file []byte) {
@@ -64,7 +65,6 @@ func (emulator *Chip8) cycle() {
 		emulator.execute_instruction(instruction)
 		start = now
 	}
-	emulator.running = false
 }
 
 func (emulator *Chip8) fetch_instruction() [2]byte {
